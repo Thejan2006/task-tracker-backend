@@ -4,8 +4,8 @@ from sqlalchemy.orm import sessionmaker
 
 SQLALCHEMY_DATABASE_URL = "postgresql://postgres:1234@localhost:5432/task_tracker_db" # PostgreSQL Connection URL
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL) # Connection Engine
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine) # make datbases session make
+engine = create_engine(SQLALCHEMY_DATABASE_URL) # Connect to  Engine
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine) #datbases session make
 
 Base = declarative_base()# to get base to creat models
 
