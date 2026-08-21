@@ -2,13 +2,26 @@ from typing import List, Optional
 from fastapi import FastAPI, Depends, HTTPException 
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-
+from fastapi.middleware.cors import CORSMiddleware
 from app import models
 from app.database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # give acess to frontend
+    allow_credentials=True,
+    allow_methods=["*"],  # GET, POST, PUT, DELETE
+    allow_headers=["*"],
+)
+
+class UserCreate(BaseModel):
+    username:str
+    email:str
+    password:str
+
 
 
 class TaskCreate(BaseModel):
