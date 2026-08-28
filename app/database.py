@@ -1,4 +1,4 @@
-
+from app.config import settings
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -8,7 +8,7 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL") # PostgreSQL Connection URL
 
-engine = create_engine(DATABASE_URL) # Connect to  Engine
+engine = create_engine(settings.DATABASE_URL) # Connect to  Engine
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine) #datbases session make
 
 Base = declarative_base()# to get base to creat models
