@@ -1,36 +1,38 @@
-from typing import List, Optional
-from fastapi import FastAPI, Depends, HTTPException
-from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
+from app.routers import auth, users, tasks, categories
+from app.exceptions import AppException
+from app.error_handlers import app_exception_handler,validation_exception_handler
+# Initialize FastAPI application
+app = FastAPI(
+    title="Task Tracker API",
+    description="Task Tracker Backend Application using FastAPI, PostgreSQL & SQLAlchemy",
+    version="1.0.0"
+)
 
-from app import models
-from app.database import engine, get_db
+# Configure Cross-Origin Resource Sharing (CORS)
+origins = ["*"]
 
-models.Base.metadata.create_all(bind=engine)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-app = FastAPI()
-
-
-class TaskCreate(BaseModel):
-    title:str
-    description: Optional[str] = None
-    is_completed:bool = False
-    
-class TaskResponse(TaskCreate): 
-      id:int
-      class Config:
-          from_attributes = True
-    
-
-
-    
-@app.get("/")# Welcome Endpoint (GET)
-def read_root():
-    return {"massage":"Welcome ro Task Tracker API"}    
-
-# Create Task Endpoint (POST)
-@app.post("/tasks/")
-def create_task(task: TaskCreate):
-    return {"status": "Task received successfully", "data": task}
-
-
+# Include application routers
+app.include_router(auth.router)
+app.include_router(users.router)
+app.include_router(tasks.router)
+app.add_exception_handler(AppException, app_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.include_router(categories.router)
+@app.get("/")
+def root():
+    """Welcome root endpoint."""
+    return {
+        "message": "Welcome to Task Tracker API",
+        "docs": "Go to /docs for interactive API documentation"
+    }
