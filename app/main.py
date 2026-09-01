@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from app.routers import auth, users, tasks
-
+from fastapi.exceptions import RequestValidationError
+from app.routers import auth, users, tasks, categories
+from app.exceptions import AppException
+from app.error_handlers import app_exception_handler,validation_exception_handler
 # Initialize FastAPI application
 app = FastAPI(
     title="Task Tracker API",
@@ -25,7 +26,9 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(tasks.router)
-
+app.add_exception_handler(AppException, app_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.include_router(categories.router)
 @app.get("/")
 def root():
     """Welcome root endpoint."""
