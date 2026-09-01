@@ -11,7 +11,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Configure Cross-Origin Resource Sharing (CORS)
+# Configure Cross-Origin Resource Sharing (CORS) give access to frobntend application to access backend API
 origins = ["*"]
 
 app.add_middleware(
