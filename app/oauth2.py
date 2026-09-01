@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
-
+from app.exceptions import AppException
 from app import models, schemas
 from app.database import get_db
 from app.config import settings
@@ -28,3 +28,14 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     if user is None:
         raise credentials_exception
     return user
+
+def require_admin(current_user:models.User = Depends(get_current_user)):
+    if current_user.role == "admin":
+        return current_user
+    else:
+        raise AppException(
+            status_code=403,
+            error_code="FORBIDDEN",
+            message="You do not have permission to access this resource"
+        )
+  
