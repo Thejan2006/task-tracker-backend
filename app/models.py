@@ -24,6 +24,23 @@ class Task(Base):
     is_completed = Column(Boolean, default=False)
     due_date = Column(DateTime, nullable=True) 
     owner_id = Column(Integer, ForeignKey("users.id")) 
-    
-    # Owner of ecah Task
+    category_id = Column(
+        Integer, 
+        ForeignKey("categories.id", ondelete="SET NULL"), 
+        nullable=True
+    )
+    # relationships woth other tables
     owner = relationship("User", back_populates="tasks")
+    category = relationship("Category", back_populates="tasks")
+    
+class Category(Base):
+    __tablename__ = "categories"
+    id = Column(Integer, primary_key=True, index=True)
+    name =Column(String,nullable=False)
+    user_id = Column(
+        Integer, 
+        ForeignKey("users.id", ondelete="CASCADE"), 
+        nullable=False
+    )
+    owner = relationship("User")
+    tasks = relationship("Task", back_populates="category")
