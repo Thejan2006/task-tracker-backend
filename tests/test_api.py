@@ -20,7 +20,7 @@ def test_create_category():
     assert response.json()["name"] == "Work"
 
 def test_create_task():
-    # මෙහිදී කලින් හැදුනු user_id=1 සහ category_id=1 ලෙස උපකල්පනය කරයි
+    # this one assumes that a user and category already exist with IDs 1. You may need to adjust this based on your test setup.
     response = client.post(
         "/tasks",
         json={
