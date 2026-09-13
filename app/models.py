@@ -1,9 +1,10 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
+from datetime import datetime, timezone
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, Text
 from sqlalchemy.orm import relationship
-from app.database import Base  # app module import
+from app.database import Base
 
-
-
+def utcnow():
+    return datetime.now(timezone.utc)
 
 class User(Base):
     __tablename__ = "users"
@@ -12,9 +13,20 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
-    role = Column(String, default="Member")
-  
+    role = Column(String, default="user", nullable=False)
+    name = Column(String, nullable=True)
+    bio = Column(Text, nullable=True)
+    avatar_url = Column(String, nullable=True)
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
+
     tasks = relationship("Task", back_populates="owner")# User Task 
+    activities = relationship("Activity", back_populates="user", cascade="all, delete-orphan")
+
+    @property
+    def is_admin(self):
+        return self.role == "admin"
+
 class Task(Base):
     __tablename__ = "tasks"
 
@@ -23,7 +35,12 @@ class Task(Base):
     description = Column(String, nullable=True)
     is_completed = Column(Boolean, default=False)
     due_date = Column(DateTime, nullable=True) 
-    owner_id = Column(Integer, ForeignKey("users.id")) 
+    priority = Column(String, nullable=True)
+    status = Column(String, default="todo", nullable=False)
+    position = Column(Integer, default=0, nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
+    updated_at = Column(DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False)
     category_id = Column(
         Integer, 
         ForeignKey("categories.id", ondelete="SET NULL"), 
@@ -44,3 +61,15 @@ class Category(Base):
     )
     owner = relationship("User")
     tasks = relationship("Task", back_populates="category")
+
+class Activity(Base):
+    __tablename__ = "activities"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    type = Column(String, nullable=False)
+    message = Column(String, nullable=False)
+    task_id = Column(Integer, ForeignKey("tasks.id", ondelete="SET NULL"), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
+
+    user = relationship("User", back_populates="activities")
