@@ -25,12 +25,12 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         raise credentials_exception
 
     user = db.query(models.User).filter(models.User.username == token_data.username).first()
-    if user is None:
+    if user is None or not user.is_active:
         raise credentials_exception
     return user
 
 def require_admin(current_user:models.User = Depends(get_current_user)):
-    if current_user.role == "admin":
+    if current_user.is_admin:
         return current_user
     else:
         raise AppException(
