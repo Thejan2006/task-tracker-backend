@@ -35,6 +35,7 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username: Optional[str] = None
     category_id: Optional[int] = None
+    user_id: Optional[int] = None
 
 
 # Base Category Schema
@@ -127,3 +128,7 @@ class DashboardStats(BaseModel):
     tasks_by_status: Dict[str, int]
     recent_activity: List[ActivityResponse]
     completion_trend: List[Dict[str, object]]
+
+class VerifyOTP(BaseModel):
+    email: EmailStr
+    otp: str
