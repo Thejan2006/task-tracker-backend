@@ -19,6 +19,8 @@ class User(Base):
     avatar_url = Column(String, nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
+    is_verified = Column(Boolean, default=False, nullable=False)
+    otp_code = Column(String, nullable=True)
 
     tasks = relationship("Task", back_populates="owner")# User Task 
     activities = relationship("Activity", back_populates="user", cascade="all, delete-orphan")
