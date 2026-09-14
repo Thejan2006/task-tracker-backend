@@ -128,7 +128,6 @@ class DashboardStats(BaseModel):
     tasks_by_status: Dict[str, int]
     recent_activity: List[ActivityResponse]
     completion_trend: List[Dict[str, object]]
-
 class VerifyOTP(BaseModel):
     email: EmailStr
     otp: str
