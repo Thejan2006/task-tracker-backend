@@ -6,7 +6,7 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision = "20260914_backfill_task_timestamps"
+revision = "20260914_task_timestamps"
 down_revision = "20260914_align_users_schema"
 branch_labels = None
 depends_on = None
