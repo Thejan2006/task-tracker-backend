@@ -11,12 +11,20 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d task_tracker_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   web:
     build: .
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     ports:
       - "8000:8000"
+    volumes:
+      - .:/app
+
     environment:
       - DATABASE_HOSTNAME=db
       - DATABASE_PORT=5432
@@ -24,7 +32,8 @@ services:
       - DATABASE_NAME=task_tracker_db
       - DATABASE_USERNAME=postgres
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 volumes:
   postgres_data:
