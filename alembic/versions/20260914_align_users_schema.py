@@ -7,7 +7,7 @@ import sqlalchemy as sa
 
 
 revision = "20260914_align_users_schema"
-down_revision = "20260913_database_driven_backend"
+down_revision = ("20260913_database_driven_backend", "d4fe09619266")
 branch_labels = None
 depends_on = None
 

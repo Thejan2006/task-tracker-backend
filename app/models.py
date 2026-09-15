@@ -42,8 +42,19 @@ class Task(Base):
     status = Column(String, default="todo", nullable=False)
     position = Column(Integer, default=0, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
-    updated_at = Column(DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False)
+    created_at = Column(
+        DateTime(timezone=True),
+        default=utcnow,
+        server_default="CURRENT_TIMESTAMP",
+        nullable=False,
+    )
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=utcnow,
+        onupdate=utcnow,
+        server_default="CURRENT_TIMESTAMP",
+        nullable=False,
+    )
     category_id = Column(
         Integer, 
         ForeignKey("categories.id", ondelete="SET NULL"), 

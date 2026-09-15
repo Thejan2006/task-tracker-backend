@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
-from app.routers import auth, users, tasks, categories, dashboard
+from app.routers import auth, users, tasks, categories, dashboard, otp
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
+from app.config import settings
 from app.exceptions import AppException
 from app.error_handlers import app_exception_handler,validation_exception_handler
 # Initialize FastAPI application
@@ -33,6 +34,7 @@ app.add_exception_handler(AppException, app_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.include_router(categories.router)
 app.include_router(dashboard.router)
+app.include_router(otp.router)
 Path("uploads/avatars").mkdir(parents=True, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 @app.get("/")
@@ -42,3 +44,6 @@ def root():
         "message": "Welcome to Task Tracker API",
         "docs": "Go to /docs for interactive API documentation"
     }
+    
+    
+    

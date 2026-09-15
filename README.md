@@ -24,10 +24,13 @@ own role, and the last active admin cannot be disabled or deleted.
 
 ## Database and configuration
 
-Run `alembic upgrade head` against an existing database. The migration adds task
-workflow fields, profile fields, and the `activities` table without deleting
-records; legacy completed tasks become `done` and positions are generated per
-owner/status column.
+Run `alembic upgrade head` against an existing database before starting the API.
+This applies the `users` schema alignment, including `is_verified`, `otp`, and
+`otp_code`, as well as task workflow fields, profile fields, and the
+`activities` table without deleting records. Legacy completed tasks become
+`done` and positions are generated per owner/status column. Docker Compose waits
+for PostgreSQL to become ready and runs this migration automatically before
+starting the API.
 
 Set `SQLALCHEMY_DATABASE_URL` or `DATABASE_USERNAME`, `DATABASE_PASSWORD`,
 `DATABASE_HOSTNAME`, `DATABASE_PORT`, and `DATABASE_NAME`. Set `SECRET_KEY`,
