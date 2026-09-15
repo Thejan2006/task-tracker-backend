@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -43,10 +44,15 @@ def verify_otp(data: schemas.VerifyOTP, db: Session = Depends(get_db)):
 # ---------------------------------------------------------
 # 2. RESEND OTP ENDPOINT (URL: POST /otp/resend)
 # ---------------------------------------------------------
-@router.post("/resend")
-def resend_otp(email: str, db: Session = Depends(get_db)):
+class ResendOTPRequest(BaseModel):
+    email: str
+
+# 2. URL  "/resend-otp"  
+
+@router.post("/resend-otp")
+def resend_otp(request: ResendOTPRequest, db: Session = Depends(get_db)):
     """Resends a new OTP to the user's email if needed"""
-    user = db.query(models.User).filter(models.User.email == email).first()
+    user = db.query(models.User).filter(models.User.email == request.email).first()
     
     if not user:
         raise HTTPException(
