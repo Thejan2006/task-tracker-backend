@@ -1,5 +1,5 @@
 import os
-import random
+import secrets
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -11,9 +11,9 @@ load_dotenv()
 MAIL_USERNAME = os.getenv("MAIL_USERNAME")
 MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
 
-# genarte random 6 digit otp code
+# generate cryptographically secure random 6 digit otp code
 def generate_otp() -> str:
-    return str(random.randint(100000, 999999))
+    return str(secrets.randbelow(900000) + 100000)
 
 def send_otp_email(email_to: str, otp_code: str): # send otp email to user
     subject = "Verify Your Account - Task Tracker App"
